@@ -26,7 +26,7 @@ function createWindow() {
     })
 
     // 加载页面
-    win.loadFile('./index.html')
+    win.loadFile('./src/demo-dialog.html')
 
     // 打开开发者工具
     win.webContents.openDevTools()

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>demo dialog</title>
+</head>
+<body>
+    <button id="openDialog">打开文件</button>
+
+    <script type="text/javascript">
+        const { dialog } = require('electron').remote
+        var $openBtn = document.getElementById('openDialog')
+        openDialog.onclick = () => {
+            dialog.showOpenDialog({
+                title: '选择图片'
+            })
+        }
+    </script>
+</body>
+</html>
