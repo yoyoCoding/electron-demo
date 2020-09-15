@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electron Demo</title>
+</head>
+<body>
+    <h1 id="h1">Hello World</h1>
+    We are using node
+    <script>
+        document.write(process.versions.node)
+    </script>
+    Chrome
+    <script>
+        document.write(process.versions.chrome)
+    </script>
+    and Electron
+    <script>
+        document.write(process.versions.electron)
+    </script>
+    <p>
+        <button id="btn">打开页面</button>
+    </p>
+
+    <!-- 使用webview打开页面 不建议使用这种方式 -->
+    <!-- <webview id="foo" src="https://github.com/yoyoCoding" style="width: 640px; height:400px;"></webview> -->
+
+    <script type="text/javascript" src="./src/index.js"></script>
+</body>
+</html>

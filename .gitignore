@@ -1,0 +1,9 @@
+# Folders to ignore
+node_modules/
+/dist/
+npm-debug.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
