@@ -71,3 +71,9 @@ webContents负责渲染和控制网页, 是 `BrowserWindow` 对象的一个属�
 
 > 当使用 `nsis` 模式打包，需要手动编写 `installer.nsh` 文件  
 > 打包后发现文件访问不了：因为打包为asar文件后内部是只读的。解决方案：将图标引用地址设置为绝对路径等等  
+
+
+### 自动更新
+1. 下载 `electron-updater`  
+2. 配置 `build` 字段中 `publish` 字段
+3. 
