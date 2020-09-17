@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, shell, BrowserView } = require('electron')
+const { app, BrowserWindow, ipcMain, shell, BrowserView, globalShortcut } = require('electron')
 const buildMenu = require('./menu.js') // 引入自定义的创建menu方法
 const buildTray = require('./tray.js') // 引入自定义的创建系统托盘图标方法
 
@@ -26,7 +26,7 @@ function createWindow() {
     })
 
     // 加载页面
-    win.loadFile('./src/demo-dialog.html')
+    win.loadFile('./index.html')
 
     // 打开开发者工具
     win.webContents.openDevTools()
@@ -58,11 +58,21 @@ function createView() {
     view.webContents.loadURL('https://github.com/yoyoCoding')
 }
 
+// 注册全局快捷键
+function registerShortCut() {
+    globalShortcut.register('ctrl+e', () => {
+        win.loadFile('./src/new.html')
+    })
+}
+
 // 初始化后调用函数
 app.on('ready', () => {
     createWindow()
     buildMenu()
     buildTray()
+
+    // 注册全局快捷键
+    registerShortCut()
 
     // 打开页面 shell方式 ，也可在渲染进程直接引用使用
     // shell.openExternal('https://github.com/yoyoCoding')

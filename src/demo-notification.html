@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>demo dialog</title>
+</head>
+<body>
+    <button id="notifyBtn">通知消息</button>
+    
+    <script type="text/javascript">
+        const $notifyBtn = document.getElementById('notifyBtn')
+        let option = {
+            title: '自定义系统通知消息',
+            body: '应用程序运行中哦，点击"x"可以关闭提醒'
+        }
+
+        $notifyBtn.onclick = (e) => {
+            // 调用h5的window.Notification实现系统通知
+            new window.Notification(option.title, option)
+        }
+
+    </script>
+</body>
+</html>

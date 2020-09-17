@@ -4,18 +4,77 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>demo dialog</title>
+    <style type="text/css">
+        .img{
+            width: 450px;
+            height: auto;
+        }
+    </style>
 </head>
 <body>
-    <button id="openDialog">打开文件</button>
+    <button id="openBtn">打开文件</button>
+    <div>
+        <img class="img" src="#" alt="待加载的图片">
+    </div>
+    <button id="saveBtn">保存文件</button>
+    <div>
+        <button id="messageBtn">弹出对话框</button>
+    </div>
 
     <script type="text/javascript">
+        const fs = require('fs')
         const { dialog } = require('electron').remote
-        var $openBtn = document.getElementById('openDialog')
-        openDialog.onclick = () => {
+        const $openBtn = document.getElementById('openBtn')
+        const $saveBtn = document.getElementById('saveBtn')
+        const $messageBtn = document.getElementById('messageBtn')
+        const $img = document.querySelector('.img') 
+
+        // 打开文件
+        $openBtn.onclick = () => {
             dialog.showOpenDialog({
-                title: '选择图片'
+                title: '选择图片',
+                defaultPath: './static/images/cat.jpg',
+                buttonLabel: '打开图片',
+                filters: [
+                    {
+                        name: 'jpg',
+                        extensions: ['jpg']
+                    }
+                ]
+            }).then(res => {
+                console.log(res)
+                $img.setAttribute('src', res.filePaths[0])
+            }).catch(err => {
+                console.log('error: ', err)
             })
         }
+
+        // 保存文件
+        $saveBtn.onclick = (e) => {
+            dialog.showSaveDialog({
+                title: '保存文件',
+                defaultPath: './static/images/saveDialog-save.txt'
+            }).then(res => {
+                console.log(res)
+                fs.writeFileSync(res.filePath, '测试写入保存文件')
+            }).catch(err => {
+                console.log(err)
+            })
+        }
+
+        // 打开消息对话框
+        $messageBtn.onclick = (e) => {
+            dialog.showMessageBox({
+                type: 'warning',
+                title: '警告信息',
+                message: '请注意页面信息！',
+                buttons: ['知道了', '取消']
+            }).then(res => {
+                console.log(res)
+            })
+        }
+
+
     </script>
 </body>
 </html>

@@ -5,9 +5,42 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "chcp 65001 && electron ."
+    "start": "chcp 65001 && electron .",
+    "packager": "electron-packager ./ MyApp --win --out ./dist --arch=x64 --app-version 1.0.0 --overwrite --icon=./icons/cute.ico --ignore=node_module",
+    "build": "electron-builder"
   },
   "author": "yyy",
   "license": "ISC",
-  "devDependencies": {}
+  "build": {
+    "productName": "myApp",
+    "appId": "com.example.app",
+    "copyright": "copyright test",
+    "directories": {
+      "output": "building"
+    },
+    "win": {
+      "icon": "./icons/cute.ico",
+      "target": [
+        {
+          "target": "nsis"
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "./icons/cute.ico",
+      "installerHeaderIcon": "./icons/cute.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "myAppIco",
+      "include": "./building/script/installer.nsh"
+    }
+  },
+  "devDependencies": {
+    "electron": "^10.1.2",
+    "electron-builder": "^22.8.0",
+    "electron-packager": "^15.1.0"
+  }
 }

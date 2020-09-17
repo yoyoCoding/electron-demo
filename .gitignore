@@ -1,6 +1,7 @@
 # Folders to ignore
 node_modules/
 /dist/
+/building/
 npm-debug.log*
 
 # Editor directories and files
