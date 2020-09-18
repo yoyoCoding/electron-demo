@@ -1,17 +1,15 @@
-const { app, BrowserWindow, ipcMain, shell, BrowserView, globalShortcut } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
 const buildMenu = require('./menu.js') // 引入自定义的创建menu方法
 const buildTray = require('./tray.js') // 引入自定义的创建系统托盘图标方法
+
+const { autoUpdater } = require('electron-updater') // 引入自动更新包
+const uploadUrl = 'http://www.yyy.com:8080/' // 更新服务器地址
 
 // 解决警告信息
 process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
 
 // 创建全局变量并在下面引用，避免被GC
 let win
-let view
-
-global.shareObject = {
-    username: 'yo'
-}
 
 // 创建窗口
 function createWindow() {
@@ -30,13 +28,6 @@ function createWindow() {
 
     // 打开开发者工具
     win.webContents.openDevTools()
-
-    // 导航完成时触发，即选项卡的旋转器停止旋转并指派onload事件后
-    win.webContents.on('did-finish-load', () => {
-        // 发送数据给渲染程序
-        win.webContents.send('something', '主进程发送到渲染进程的数据')
-    })
-
     win.on('closed', () => {
         // 取消引用
         // 如果应用支持多窗口的话，
@@ -45,24 +36,65 @@ function createWindow() {
     })
 }
 
-// 创建内嵌视图打开页面
-function createView() {
-    view = new BrowserView()
-    win.setBrowserView(view)
-    view.setBounds({
-        x: 0,
-        y: 150,
-        width: 300,
-        height: 300
+// 检测更新 在你想要检查更新的时候执行
+// renderer事件触发后的操作自行编号
+function updateHandle() {
+    let message = {
+    error: '检查更新/下载出错',
+    checking: '正在检查更新……',
+    updateAva: '检测到新版本，正在下载……',
+    updateNotAva: '现在使用的就是最新版本，不用更新',
+    };
+    const os = require('os')
+    let versionInfo = ''
+
+    autoUpdater.setFeedURL(uploadUrl)
+
+    autoUpdater.on('error', function (error) {
+        sendUpdateMessage(error)
+    });
+    autoUpdater.on('checking-for-update', function () {
+        sendUpdateMessage(message.checking)
+    });
+    autoUpdater.on('update-available', function (info) {
+        versionInfo = info
+        sendUpdateMessage(info)
+    });
+    autoUpdater.on('update-not-available', function (info) {
+        sendUpdateMessage(message.updateNotAva)
+    });
+
+    // 更新下载进度事件
+    autoUpdater.on('download-progress', function (progressObj) {
+        win.webContents.send('downloadProgress', progressObj)
     })
-    view.webContents.loadURL('https://github.com/yoyoCoding')
+    // 包下载成功时触发
+    autoUpdater.on('update-downloaded', function (event, releaseNotes, releaseName, releaseDate, updateUrl, quitAndUpdate) {
+
+        ipcMain.on('isUpdateNow', (e, arg) => {
+            console.log("资源下载完毕，开始更新");
+            // console.log(arg);
+            // 包下载完成后，重启当前的应用并且安装更新
+            // autoUpdater.quitAndInstall();
+        })
+
+        win.webContents.send('isUpdateNow', versionInfo)
+    })
+
+    ipcMain.on("checkForUpdate",() => {
+        // 收到renderer进程的检查通知后，执行自动更新检查
+        // autoUpdater.checkForUpdates();
+        let checkInfo = autoUpdater.checkForUpdates()
+        checkInfo.then(data => {
+            console.log('checkInfo:', data)
+        })
+    })
+
 }
 
-// 注册全局快捷键
-function registerShortCut() {
-    globalShortcut.register('ctrl+e', () => {
-        win.loadFile('./src/new.html')
-    })
+// 通过main进程发送事件给renderer进程，提示更新信息
+function sendUpdateMessage(text) {
+    win.webContents.send('message', text)
 }
 
 // 初始化后调用函数
@@ -70,16 +102,8 @@ app.on('ready', () => {
     createWindow()
     buildMenu()
     buildTray()
-
-    // 注册全局快捷键
-    registerShortCut()
-
-    // 打开页面 shell方式 ，也可在渲染进程直接引用使用
-    // shell.openExternal('https://github.com/yoyoCoding')
-
-    // 打开内嵌页面
-    // createView()
-
+    // 尝试自动更新
+    updateHandle()
 })
 
 // 全部窗口关闭时退出
@@ -98,10 +122,4 @@ app.on('activate', () => {
         createWindow()
     }
 })
-
-// 监听渲染程序发来的事件
-/* ipcMain.on('something', (event, data) => {
-    console.log('主进程接收到的值：' + data)
-    event.sender.send('something1', '我是主进程返回的值')
-}) */
 

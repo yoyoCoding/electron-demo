@@ -77,3 +77,24 @@ webContents负责渲染和控制网页, 是 `BrowserWindow` 对象的一个属�
 1. 下载 `electron-updater`  
 2. 配置 `build` 字段中 `publish` 字段
 3. 
+
+### 配置本地静态资源服务器
+使用nginx配置本地服务器，提供下载测试  
+```javascript
+server {
+    listen       8800;
+    server_name  localhost;
+    location / {
+        root   E:/my_exercise/staticServer/;
+        autoindex on;
+        autoindex_exact_size off;
+    }
+    location ~ \.(txt|png|docx)$ {
+        root   E:/my_exercise/staticServer/;
+        autoindex on;
+        autoindex_exact_size off;
+        add_header Content-Disposition attachment;
+        add_header Content-Type application/octet-stream;
+    }
+}
+```

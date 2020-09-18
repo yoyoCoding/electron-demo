@@ -34,9 +34,18 @@
       "installerHeaderIcon": "./icons/cute.ico",
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "myAppIco",
+      "shortcutName": "yoyoApp",
       "include": "./building/script/installer.nsh"
-    }
+    },
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "http://www.yyy.com:8080/" 
+      }
+    ],
+    "releaseInfo":{  
+      "releaseNotes":"1.说明一：修复已知bug \n 2.说明二：优化"  
+    }  
   },
   "devDependencies": {
     "electron": "^10.1.2",
